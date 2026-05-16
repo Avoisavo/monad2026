@@ -56,11 +56,27 @@ export function Navbar() {
         BRAIN HOTEL
       </span>
 
-      {/* Right: floors + active + connect */}
+      {/* Right: floors + active + tokens + connect */}
       <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
         <span style={{ fontFamily: px, fontSize: 8, color: "#AAAACC" }}>4 FLOORS</span>
         <div style={{ width: 1, height: 14, background: "#334466" }} />
         <span style={{ fontFamily: px, fontSize: 8, color: "#AAAACC" }}>6 ACTIVE</span>
+        {isConnected && onCorrectChain && (
+          <>
+            <div style={{ width: 1, height: 14, background: "#334466" }} />
+            <span
+              style={{
+                fontFamily: px,
+                fontSize: 8,
+                color: "#FFD566",
+                textShadow: "0 0 6px #FFB04488",
+              }}
+              title="On-chain token balance from AIQueryCredits"
+            >
+              {fmtTokens(tokens as bigint | undefined)} TOKENS
+            </span>
+          </>
+        )}
         <div style={{ width: 1, height: 14, background: "#334466", marginLeft: 4 }} />
         <ConnectButton
           showBalance={false}
