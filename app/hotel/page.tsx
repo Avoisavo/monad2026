@@ -1,6 +1,8 @@
 "use client";
 import Image from "next/image";
+import { useState } from "react";
 import { Lift } from "@/components/Lift";
+import CharacterBoard from "../chat/CharacterBoard";
 
 const ROOM_H = 196;
 const LABEL_H = 30;
@@ -295,6 +297,8 @@ const FLOOR_LABELS = ["F4","F3","F2","F1"];
 const TOTAL_H = ROOM_H * 4;
 
 export default function HotelPage() {
+  const [boardOpen, setBoardOpen] = useState(false);
+
   return (
     <div style={{ minHeight: "100vh", background: "#000000", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ display: "flex", flexDirection: "column", boxShadow: "0 0 80px #00000099" }}>
@@ -373,18 +377,20 @@ export default function HotelPage() {
 
           {/* action buttons */}
           {["BUILD","UPGRADE","MENU"].map((btn, i) => (
-            <div key={btn} style={{
+            <button key={btn} type="button" onClick={() => btn === "MENU" && setBoardOpen(true)} style={{
               padding: "5px 10px",
               background: i === 2 ? "#2A7A2A" : "#1A2A5A",
               border: `2px solid ${i === 2 ? "#1A5A1A" : "#334488"}`,
               cursor: "pointer",
+              appearance: "none",
             }}>
               <span style={{ fontFamily: px, fontSize: 8, color: i === 2 ? "#AAFFAA" : "#88AAFF", letterSpacing: 1 }}>{btn}</span>
-            </div>
+            </button>
           ))}
         </div>
 
       </div>
+      <CharacterBoard open={boardOpen} onToggle={() => setBoardOpen((current) => !current)} />
     </div>
   );
 }
