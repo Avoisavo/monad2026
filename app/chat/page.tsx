@@ -227,7 +227,7 @@ function SushiBar({ chatOpen }: { chatOpen: boolean }) {
         left: 170,
         top: -8,
         zIndex: 60,
-        opacity: chatOpen ? 0.6 : 0,
+        opacity: chatOpen ? 0.92 : 0,
         transform: chatOpen ? "translate(-50%, 0) scale(1)" : "translate(-50%, 8px) scale(0.92)",
         transition: "opacity 180ms ease",
         pointerEvents: "none",
