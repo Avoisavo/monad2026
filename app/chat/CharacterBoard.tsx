@@ -329,6 +329,21 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
               <p style={{ margin: "8px 0 0", color: "#5B3D1F", fontSize: 13, lineHeight: 1.38, maxWidth: "31ch", fontWeight: 650 }}>
                 {selectedResident.tone}
               </p>
+              <div style={{ marginTop: 10, display: "flex", alignItems: "center", gap: 7 }}>
+                <div style={{ display: "flex", gap: 3 }}>
+                  {[1,2,3,4,5].map(s => (
+                    <div key={s} style={{
+                      width: 18,
+                      height: 18,
+                      background: s <= 4 ? "#F4A623" : "rgba(87,57,24,0.25)",
+                      clipPath: "polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)",
+                      filter: "drop-shadow(0 0 0.5px #000) drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000)",
+                    }} />
+                  ))}
+                </div>
+                <span style={{ fontFamily: "var(--font-geist-mono), monospace", fontSize: 13, fontWeight: 900, color: "#5B3D1F" }}>4.8</span>
+                <span style={{ fontFamily: "var(--font-geist-mono), monospace", fontSize: 11, color: "#8A6030" }}>(142)</span>
+              </div>
             </div>
           </div>
 
