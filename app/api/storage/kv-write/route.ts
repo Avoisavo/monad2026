@@ -6,7 +6,7 @@ import path from "path";
 import os from "os";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 180;
 
 const RPC_URL = "https://evmrpc-testnet.0g.ai";
 const INDEXER_RPC = "https://indexer-storage-testnet-turbo.0g.ai";

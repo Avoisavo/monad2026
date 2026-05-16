@@ -6,7 +6,7 @@ import os from "os";
 import { decrypt } from "@/lib/encrypt";
 
 export const runtime = "nodejs";
-export const maxDuration = 60;
+export const maxDuration = 180;
 
 const INDEXER_RPC = "https://indexer-storage-testnet-turbo.0g.ai";
 
