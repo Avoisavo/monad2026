@@ -13,7 +13,7 @@ import { monadTestnet } from "@/lib/wagmi";
 export const TOKENS_REFETCH_EVENT = "tokens:refetch";
 
 const selectedResident = {
-  name: "Banana Barista",
+  name: "TungTungTung Sahur",
   room: "Coffee House",
   kb: "Cafe Launch Notes",
   tone: "fast retail ops, menus, customer rituals",

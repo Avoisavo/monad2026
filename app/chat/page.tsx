@@ -7,6 +7,7 @@ import CharacterBoard from "./CharacterBoard";
 const ROOM_H = 196;
 const LABEL_H = 30;
 const HOTEL_H = ROOM_H * 4 + 46 + 6;
+const FRUIT_ASSET_VERSION = "2026-05-16";
 
 function Label({ text, members = 0, income = 0 }: { text: string; members?: number; income?: number }) {
   return (
@@ -99,7 +100,7 @@ function FortuneTeller() {
           <div style={{ position: "absolute", top: 0, left: "50%", width: 4, height: "100%", background: "#5A3015", transform: "translateX(-50%)" }} />
           <div style={{ position: "absolute", top: "50%", left: 0, width: "100%", height: 4, background: "#5A3015", transform: "translateY(-50%)" }} />
         </div>
-        <Image src="/apple.png" alt="apple" width={110} height={110} style={{ position: "absolute", left: 76, bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <Image unoptimized src={`/apple.png?v=${FRUIT_ASSET_VERSION}`} alt="apple" width={110} height={110} style={{ position: "absolute", left: 76, bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 10, background: "#2E200E" }} />
         <Door h={Math.floor(H * 0.67)} w={58} />
       </div>
@@ -157,7 +158,7 @@ function Laundromat() {
           </div>
         </div>
         <Image src="/cucumber1.png"   alt="cucumber"   width={110} height={110} style={{ position: "absolute", left: 76,  bottom: -8, objectFit: "contain", zIndex: 10 }} />
-        <Image src="/strawberry.png" alt="strawberry" width={110} height={110} style={{ position: "absolute", left: 180, bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <Image unoptimized src={`/strawberry.png?v=${FRUIT_ASSET_VERSION}`} alt="strawberry" width={110} height={110} style={{ position: "absolute", left: 180, bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 8, background: "#9AA0B2" }} />
         <Door h={Math.floor(H * 0.62)} w={56} />
       </div>
