@@ -519,15 +519,15 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
           display: grid;
           grid-template-columns: 18px 1fr;
           gap: 7px;
-          align-items: start;
+          align-items: baseline;
         }
 
         .markdown-list-row > span {
           color: #835621;
           font-family: var(--font-geist-mono), monospace;
-          font-size: 11px;
+          font-size: 14px;
           font-weight: 900;
-          line-height: 1.7;
+          line-height: 1.44;
         }
 
         @media (max-width: 640px) {
