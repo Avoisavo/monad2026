@@ -13,17 +13,17 @@ import { monadTestnet } from "@/lib/wagmi";
 export const TOKENS_REFETCH_EVENT = "tokens:refetch";
 
 const selectedResident = {
-  name: "TungTungTung Sahur",
-  room: "Coffee House",
-  kb: "Cafe Launch Notes",
-  tone: "fast retail ops, menus, customer rituals",
-  face: "BA",
+  name: "TungTungTung Critic",
+  room: "Judge Desk",
+  kb: "Hackathon Review Notes",
+  tone: "demo clarity, technical depth, market fit",
+  face: "AI",
 };
 
 const boardNotes = [
-  { label: "pattern", text: "Morning queue spikes after 8:40" },
-  { label: "margin", text: "Croissant loss tracked against refill drinks" },
-  { label: "lead", text: "Same wallet appears in laundromat receipts" },
+  { label: "demo", text: "Core user flow must be obvious in 30 seconds" },
+  { label: "build", text: "Technical claims need proof beyond slides" },
+  { label: "risk", text: "Token incentives cannot hide weak retention" },
 ];
 
 type ChatMessage = {
