@@ -15,7 +15,8 @@
       "Bash(curl -s \"https://raw.githubusercontent.com/0gfoundation/0g-storage-ts-starter-kit/master/.env.example\")",
       "Bash(curl -s \"https://raw.githubusercontent.com/0gfoundation/0g-storage-ts-starter-kit/master/package.json\")",
       "Bash(cp /tmp/test-0g-upload.mjs /Users/Cedricctf/Code/monad2026/test-0g-upload.mjs)",
-      "Bash(node test-0g-upload.mjs ./.env)"
+      "Bash(node test-0g-upload.mjs ./.env)",
+      "Bash(npm run *)"
     ]
   }
 }
