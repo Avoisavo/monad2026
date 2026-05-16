@@ -34,7 +34,6 @@ export default function RootLayout({
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${pressStart.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Providers>
-          <Navbar />
           <div className="flex flex-1 flex-col">{children}</div>
         </Providers>
       </body>

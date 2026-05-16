@@ -6,7 +6,7 @@ export default function LandingPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#000", display: "flex", alignItems: "flex-start", justifyContent: "center", paddingTop: "0px" }}>
-      <div style={{ position: "relative", marginTop: "-90px", width: "40%" }}>
+      <div style={{ position: "relative", marginTop: "-110px", width: "45%" }}>
         <video
           style={{ width: "100%", height: "auto", display: "block" }}
           autoPlay

@@ -1,14 +1,10 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useState } from "react";
 import { Lift } from "@/components/Lift";
-import CharacterBoard from "./CharacterBoard";
 import { Navbar } from "@/components/Navbar";
 
 const ROOM_H = 196;
 const LABEL_H = 30;
-const HOTEL_H = ROOM_H * 4 + 46 + 6;
-const FRUIT_ASSET_VERSION = "2026-05-16";
 
 function Label({ text, members = 0, income = 0 }: { text: string; members?: number; income?: number }) {
   return (
@@ -101,7 +97,7 @@ function FortuneTeller() {
           <div style={{ position: "absolute", top: 0, left: "50%", width: 4, height: "100%", background: "#5A3015", transform: "translateX(-50%)" }} />
           <div style={{ position: "absolute", top: "50%", left: 0, width: "100%", height: 4, background: "#5A3015", transform: "translateY(-50%)" }} />
         </div>
-        <Image unoptimized src={`/apple.png?v=${FRUIT_ASSET_VERSION}`} alt="apple" width={110} height={110} style={{ position: "absolute", left: 76, bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <Image src="/apple.png" alt="apple" width={110} height={110} style={{ position: "absolute", left: 76, bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 10, background: "#2E200E" }} />
         <Door h={Math.floor(H * 0.67)} w={58} />
       </div>
@@ -159,7 +155,7 @@ function Laundromat() {
           </div>
         </div>
         <Image src="/cucumber1.png"   alt="cucumber"   width={110} height={110} style={{ position: "absolute", left: 76,  bottom: -8, objectFit: "contain", zIndex: 10 }} />
-        <Image unoptimized src={`/strawberry.png?v=${FRUIT_ASSET_VERSION}`} alt="strawberry" width={110} height={110} style={{ position: "absolute", left: 180, bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <Image src="/strawberry.png" alt="strawberry" width={110} height={110} style={{ position: "absolute", left: 180, bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 8, background: "#9AA0B2" }} />
         <Door h={Math.floor(H * 0.62)} w={56} />
       </div>
@@ -167,10 +163,10 @@ function Laundromat() {
   );
 }
 
-function SushiBar({ chatOpen }: { chatOpen: boolean }) {
+function SushiBar() {
   const H = ROOM_H - LABEL_H;
   return (
-    <div style={{ display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A", position: "relative" }}>
+    <div style={{ display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A" }}>
       <Label text="SUSHI BAR" members={2} income={540} />
       <div style={{ height: H, position: "relative", overflow: "hidden", background: "#BFA070" }}>
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 28, background: "rgba(255,210,130,0.18)" }} />
@@ -221,54 +217,9 @@ function SushiBar({ chatOpen }: { chatOpen: boolean }) {
           <div style={{ width: 18, height: 14, borderRadius: "50%", background: "#EE5577", marginLeft: -8, marginTop: -10, boxShadow: "3px -4px 0 #DD3366, -4px -2px 0 #FF77AA" }} />
         </div>
         <Image src="/tung1.png"     alt="tung"     width={160} height={160} style={{ position: "absolute", left: 76,  bottom: -8, objectFit: "contain", zIndex: 10 }} />
-        <Image src="/eggplant1-clean.png" alt="eggplant" width={110} height={110} style={{ position: "absolute", left: 186, bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <Image src="/eggplant1.png" alt="eggplant" width={110} height={110} style={{ position: "absolute", left: 186, bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 8, background: "#7A5028" }} />
-      </div>
-      <div style={{
-        position: "absolute",
-        left: 170,
-        top: -8,
-        zIndex: 60,
-        opacity: chatOpen ? 0.92 : 0,
-        transform: chatOpen ? "translate(-50%, 0) scale(1)" : "translate(-50%, 8px) scale(0.92)",
-        transition: "opacity 180ms ease",
-        pointerEvents: "none",
-        animation: chatOpen ? "speechBubbleBob 980ms ease-in-out infinite" : "none",
-      }}>
-        <div style={{
-          position: "relative",
-          minWidth: 50,
-          height: 34,
-          background: "linear-gradient(180deg, #F7F0D4 0%, #D9C891 100%)",
-          border: "3px solid #3A2410",
-          boxShadow: "inset 0 0 0 2px #FFF6C8, 3px 3px 0 #00000088",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-        }}>
-          <span style={{
-            fontFamily: px,
-            fontSize: 17,
-            color: "#1A1430",
-            lineHeight: 1,
-            letterSpacing: 2,
-            textShadow: "1px 1px 0 #FFFFFF",
-          }}>
-            ...
-          </span>
-          <div style={{
-            position: "absolute",
-            left: "50%",
-            bottom: -13,
-            width: 16,
-            height: 16,
-            background: "#D9C891",
-            borderRight: "3px solid #3A2410",
-            borderBottom: "3px solid #3A2410",
-            transform: "translateX(-50%) rotate(45deg)",
-            boxShadow: "2px 2px 0 #00000055",
-          }} />
-        </div>
+        <Door h={Math.floor(H * 0.68)} w={56} />
       </div>
     </div>
   );
@@ -342,73 +293,14 @@ function CoffeeHouse() {
 
 const px = "var(--font-pixel), monospace";
 const FLOOR_LABELS = ["F4","F3","F2","F1"];
+const TOTAL_H = ROOM_H * 4;
 
-export default function Home() {
-  const [boardOpen, setBoardOpen] = useState(false);
-  const [hotelScale, setHotelScale] = useState(1);
-
-  useEffect(() => {
-    function onKeyDown(event: KeyboardEvent) {
-      const target = event.target as HTMLElement | null;
-      const tagName = target?.tagName;
-      const isTyping = tagName === "INPUT" || tagName === "TEXTAREA" || target?.isContentEditable;
-
-      if (!isTyping && event.key.toLowerCase() === "w") {
-        event.preventDefault();
-        setBoardOpen((current) => !current);
-      }
-    }
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, []);
-
-  useEffect(() => {
-    function updateHotelScale() {
-      const availableHeight = Math.max(320, window.innerHeight - 58);
-      setHotelScale(Math.min(1, availableHeight / HOTEL_H));
-    }
-
-    const initialScale = window.setTimeout(updateHotelScale, 0);
-    window.scrollTo(0, 0);
-    window.addEventListener("resize", updateHotelScale);
-    return () => {
-      window.clearTimeout(initialScale);
-      window.removeEventListener("resize", updateHotelScale);
-    };
-  }, []);
-
+export default function HotelPage() {
   return (
-    <div style={{
-      position: "fixed",
-      top: 44,
-      right: 0,
-      bottom: 0,
-      left: 0,
-      overflow: "hidden",
-      background: "#000000",
-      display: "flex",
-      alignItems: "flex-start",
-      justifyContent: "center",
-    }}>
-      <style jsx global>{`
-        @keyframes speechBubbleBob {
-          0%, 100% {
-            transform: translate(-50%, 0) scale(1);
-          }
-          50% {
-            transform: translate(-50%, -12px) scale(1.06);
-          }
-        }
-      `}</style>
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        transformOrigin: "top center",
-        transform: boardOpen ? `translateX(calc(-50vw + 320px)) scale(${hotelScale})` : `translateX(0) scale(${hotelScale})`,
-        transition: "transform 1120ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 820ms ease",
-        boxShadow: boardOpen ? "18px 0 70px rgba(7,6,4,0.58)" : "0 0 80px #00000099",
-      }}>
+    <div style={{ minHeight: "100vh", background: "#000000", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
+      <div style={{ display: "flex", flexDirection: "column", boxShadow: "0 0 80px #00000099" }}>
 
         {/* ── BUILDING ── */}
         <div style={{ display: "flex", alignItems: "stretch" }}>
@@ -445,7 +337,7 @@ export default function Home() {
           <div style={{ width: 410, display: "flex", flexDirection: "column" }}>
             <FortuneTeller />
             <Laundromat />
-            <SushiBar chatOpen={boardOpen} />
+            <SushiBar />
             <CoffeeHouse />
           </div>
         </div>
@@ -484,20 +376,19 @@ export default function Home() {
 
           {/* action buttons */}
           {["BUILD","UPGRADE","MENU"].map((btn, i) => (
-            <button key={btn} type="button" onClick={() => btn === "MENU" && setBoardOpen(true)} style={{
+            <div key={btn} style={{
               padding: "5px 10px",
               background: i === 2 ? "#2A7A2A" : "#1A2A5A",
               border: `2px solid ${i === 2 ? "#1A5A1A" : "#334488"}`,
               cursor: "pointer",
-              appearance: "none",
             }}>
               <span style={{ fontFamily: px, fontSize: 8, color: i === 2 ? "#AAFFAA" : "#88AAFF", letterSpacing: 1 }}>{btn}</span>
-            </button>
+            </div>
           ))}
         </div>
 
       </div>
-      <CharacterBoard open={boardOpen} onToggle={() => setBoardOpen((current) => !current)} />
+      </div>
     </div>
   );
 }
