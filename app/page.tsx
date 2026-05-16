@@ -1,5 +1,7 @@
 "use client";
 
+import { useEffect, useState } from "react";
+
 const ROOM_H = 196;
 const LABEL_H = 30;
 
@@ -45,10 +47,10 @@ function Door({ h, w = 58 }: { h: number; w?: number }) {
 function FortuneTeller() {
   const H = ROOM_H - LABEL_H;
   return (
-    <div style={{ display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A" }}>
+    <div style={{ flex: "1 1 0", minHeight: 0, display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A" }}>
       <Label text="FORTUNE TELLER" />
       <div style={{
-        height: H, position: "relative", overflow: "hidden",
+        flex: 1, minHeight: 0, position: "relative", overflow: "hidden",
         background: "#3E3060",
         backgroundImage: "repeating-linear-gradient(90deg, rgba(120,90,180,0.25) 0px, rgba(120,90,180,0.25) 10px, transparent 10px, transparent 20px)",
       }}>
@@ -122,10 +124,10 @@ function FortuneTeller() {
 function Laundromat() {
   const H = ROOM_H - LABEL_H;
   return (
-    <div style={{ display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A" }}>
+    <div style={{ flex: "1 1 0", minHeight: 0, display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A" }}>
       <Label text="LAUNDROMAT" />
       <div style={{
-        height: H, position: "relative", overflow: "hidden",
+        flex: 1, minHeight: 0, position: "relative", overflow: "hidden",
         background: "#D4D8E0",
         backgroundImage: "repeating-linear-gradient(0deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 18px), repeating-linear-gradient(90deg, rgba(0,0,0,0.05) 0px, rgba(0,0,0,0.05) 1px, transparent 1px, transparent 18px)",
       }}>
@@ -193,9 +195,9 @@ function Laundromat() {
 function SushiBar() {
   const H = ROOM_H - LABEL_H;
   return (
-    <div style={{ display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A" }}>
+    <div style={{ flex: "1 1 0", minHeight: 0, display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A" }}>
       <Label text="SUSHI BAR" />
-      <div style={{ height: H, position: "relative", overflow: "hidden", background: "#BFA070" }}>
+      <div style={{ flex: 1, minHeight: 0, position: "relative", overflow: "hidden", background: "#BFA070" }}>
         {/* warm ceiling glow */}
         <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 28, background: "rgba(255,210,130,0.18)" }} />
 
@@ -273,9 +275,9 @@ function SushiBar() {
 function CoffeeHouse() {
   const H = ROOM_H - LABEL_H;
   return (
-    <div style={{ display: "flex", flexDirection: "column" }}>
+    <div style={{ flex: "1 1 0", minHeight: 0, display: "flex", flexDirection: "column" }}>
       <Label text="COFFEE HOUSE" />
-      <div style={{ height: H, position: "relative", overflow: "hidden", background: "#484858" }}>
+      <div style={{ flex: 1, minHeight: 0, position: "relative", overflow: "hidden", background: "#484858" }}>
 
         {/* ── left brick wall section ── */}
         <div style={{
@@ -351,14 +353,274 @@ function CoffeeHouse() {
   );
 }
 
+const selectedResident = {
+  name: "Banana Barista",
+  room: "Coffee House",
+  kb: "Cafe Launch Notes",
+  tone: "fast retail ops, menus, customer rituals",
+  face: "BA",
+  status: "ready",
+};
+
+const boardNotes = [
+  "Morning queue patterns",
+  "Menu margin memory",
+  "Supplier rumor log",
+];
+
+const hardcodedMessages = [
+  {
+    who: "you",
+    text: "What does this knowledge base know about opening week?",
+  },
+  {
+    who: "agent",
+    text: "Opening week has two useful clusters: drink demand spikes after 8:40, and pastry sellouts happen before the second supplier drop.",
+  },
+  {
+    who: "you",
+    text: "Which room should I inspect next?",
+  },
+  {
+    who: "agent",
+    text: "Start with the Coffee House counter notes, then cross-check Laundromat chatter. The same customers show up in both timelines.",
+  },
+];
+
+function CharacterBoard({ open, onToggle }: { open: boolean; onToggle: () => void }) {
+  return (
+    <aside
+      aria-hidden={!open}
+      style={{
+        position: "fixed",
+        top: 18,
+        right: 18,
+        bottom: 18,
+        width: "min(520px, 42vw)",
+        minWidth: 390,
+        zIndex: 20,
+        transform: open ? "translateX(0) rotate(0deg)" : "translateX(calc(100% + 36px)) rotate(1deg)",
+        opacity: open ? 1 : 0,
+        transition: "transform 620ms cubic-bezier(0.16, 1, 0.3, 1), opacity 420ms ease",
+        pointerEvents: open ? "auto" : "none",
+        color: "#F6F2DC",
+      }}
+    >
+      <div style={{
+        height: "100%",
+        display: "grid",
+        gridTemplateRows: "auto auto 1fr auto",
+        gap: 12,
+        padding: 16,
+        background: "linear-gradient(145deg, #24160D 0%, #46301B 46%, #16100B 100%)",
+        border: "3px solid #C99B4E",
+        boxShadow: "0 28px 70px rgba(0,0,0,0.56), inset 0 0 0 2px rgba(255,235,160,0.16)",
+      }}>
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+          <div>
+            <div style={{ fontFamily: "var(--font-pixel), monospace", fontSize: 10, color: "#8EF7A8", letterSpacing: 2 }}>
+              CHARACTER BOARD
+            </div>
+            <h1 style={{ margin: "5px 0 0", fontSize: 28, lineHeight: 1, letterSpacing: 0 }}>
+              {selectedResident.name}
+            </h1>
+          </div>
+          <button
+            type="button"
+            onClick={onToggle}
+            aria-label="Close character board"
+            style={{
+              width: 42,
+              height: 42,
+              borderRadius: 0,
+              border: "2px solid #F1C76A",
+              background: "#1A120B",
+              color: "#F1C76A",
+              fontSize: 24,
+              lineHeight: "36px",
+              cursor: "pointer",
+            }}
+          >
+            X
+          </button>
+        </div>
+
+        <section style={{
+          display: "grid",
+          gridTemplateColumns: "86px 1fr",
+          gap: 14,
+          alignItems: "stretch",
+          padding: 12,
+          background: "rgba(255, 240, 180, 0.08)",
+          border: "2px solid rgba(241, 199, 106, 0.55)",
+        }}>
+          <div style={{
+            display: "grid",
+            placeItems: "center",
+            fontSize: 48,
+            background: "linear-gradient(180deg, #F7D86E, #5FAE50)",
+            border: "3px solid #171007",
+            boxShadow: "inset 0 -8px 0 rgba(0,0,0,0.18)",
+          }}>
+            {selectedResident.face}
+          </div>
+          <div style={{ minWidth: 0 }}>
+            <div style={{ fontSize: 13, color: "#F1C76A", textTransform: "uppercase", letterSpacing: 1.4 }}>
+              {selectedResident.room} / {selectedResident.status}
+            </div>
+            <div style={{ marginTop: 6, fontSize: 18, fontWeight: 800 }}>
+              {selectedResident.kb}
+            </div>
+            <p style={{ margin: "7px 0 0", color: "#CFC0A8", fontSize: 13, lineHeight: 1.45 }}>
+              {selectedResident.tone}
+            </p>
+          </div>
+        </section>
+
+        <section style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 }}>
+          {boardNotes.map((note, index) => (
+            <div key={note} style={{
+              minHeight: 68,
+              padding: 9,
+              background: ["#3E2E63", "#31513B", "#65322B"][index],
+              border: "2px solid rgba(255,255,255,0.16)",
+              boxShadow: "inset 0 -5px 0 rgba(0,0,0,0.22)",
+              fontSize: 12,
+              lineHeight: 1.25,
+              fontWeight: 800,
+            }}>
+              <span style={{ display: "block", color: "#F1C76A", fontSize: 10, marginBottom: 6 }}>
+                0{index + 1}
+              </span>
+              {note}
+            </div>
+          ))}
+        </section>
+
+        <section style={{
+          minHeight: 0,
+          overflow: "auto",
+          display: "flex",
+          flexDirection: "column",
+          gap: 10,
+          padding: 12,
+          background: "rgba(8, 6, 5, 0.48)",
+          border: "2px solid rgba(255,255,255,0.10)",
+        }}>
+          {hardcodedMessages.map((message, index) => {
+            const isAgent = message.who === "agent";
+            return (
+              <div key={`${message.who}-${index}`} style={{
+                alignSelf: isAgent ? "flex-start" : "flex-end",
+                width: "min(88%, 390px)",
+                display: "grid",
+                gap: 5,
+              }}>
+                <div style={{
+                  fontFamily: "var(--font-pixel), monospace",
+                  fontSize: 9,
+                  color: isAgent ? "#8EF7A8" : "#7FD4FF",
+                  letterSpacing: 1.5,
+                  textTransform: "uppercase",
+                }}>
+                  {isAgent ? selectedResident.name : "You"}
+                </div>
+                <div style={{
+                  padding: "11px 12px",
+                  background: isAgent ? "#213E2A" : "#173654",
+                  border: isAgent ? "2px solid #72C878" : "2px solid #68B7E8",
+                  boxShadow: "inset 0 -4px 0 rgba(0,0,0,0.18)",
+                  fontSize: 14,
+                  lineHeight: 1.42,
+                }}>
+                  {message.text}
+                </div>
+              </div>
+            );
+          })}
+        </section>
+
+        <form style={{ display: "grid", gridTemplateColumns: "1fr 76px", gap: 8 }}>
+          <input
+            aria-label="Query selected resident"
+            defaultValue="Ask about menu anomalies..."
+            style={{
+              minWidth: 0,
+              height: 44,
+              padding: "0 12px",
+              color: "#F6F2DC",
+              background: "#100B08",
+              border: "2px solid rgba(241, 199, 106, 0.58)",
+              outline: "none",
+              fontSize: 14,
+            }}
+          />
+          <button
+            type="button"
+            style={{
+              height: 44,
+              background: "#8EF7A8",
+              color: "#10210F",
+              border: "2px solid #D9FFB0",
+              fontFamily: "var(--font-pixel), monospace",
+              fontSize: 10,
+              cursor: "pointer",
+            }}
+          >
+            SEND
+          </button>
+        </form>
+      </div>
+    </aside>
+  );
+}
+
 // ── MAIN ─────────────────────────────────────────────────────────
 export default function Home() {
+  const [boardOpen, setBoardOpen] = useState(false);
+
+  useEffect(() => {
+    function onKeyDown(event: KeyboardEvent) {
+      const target = event.target as HTMLElement | null;
+      const tagName = target?.tagName;
+      const isTyping = tagName === "INPUT" || tagName === "TEXTAREA" || target?.isContentEditable;
+
+      if (!isTyping && event.key.toLowerCase() === "w") {
+        event.preventDefault();
+        setBoardOpen((current) => !current);
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div style={{
-      minHeight: "100vh", background: "#000000",
-      display: "flex", alignItems: "center", justifyContent: "center",
+      minHeight: "100vh",
+      height: "100vh",
+      overflow: "hidden",
+      background: "radial-gradient(circle at 20% 20%, #1B1722 0%, #070606 42%, #000 100%)",
+      position: "relative",
     }}>
-      <div style={{ display: "flex", alignItems: "stretch", boxShadow: "0 0 60px #00000099" }}>
+      <main style={{
+        position: "absolute",
+        inset: 0,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        paddingLeft: 0,
+        paddingRight: 0,
+      }}>
+        <div style={{
+          height: "100vh",
+          display: "flex",
+          alignItems: "stretch",
+          transformOrigin: "center center",
+          transform: boardOpen ? "translateX(calc(-50vw + 275px)) scale(1)" : "translateX(0) scale(1)",
+          transition: "transform 1120ms cubic-bezier(0.4, 0, 0.2, 1), box-shadow 820ms ease",
+          boxShadow: boardOpen ? "18px 0 70px rgba(0,0,0,0.58)" : "0 0 60px #00000099",
+        }}>
 
         {/* left grey brick column */}
         <div style={{
@@ -376,14 +638,17 @@ export default function Home() {
         </div>
 
         {/* building */}
-        <div style={{ width: 410, display: "flex", flexDirection: "column" }}>
+        <div style={{ width: 410, height: "100vh", display: "flex", flexDirection: "column" }}>
           <FortuneTeller />
           <Laundromat />
           <SushiBar />
           <CoffeeHouse />
         </div>
 
-      </div>
+        </div>
+      </main>
+
+      <CharacterBoard open={boardOpen} onToggle={() => setBoardOpen((current) => !current)} />
     </div>
   );
 }
