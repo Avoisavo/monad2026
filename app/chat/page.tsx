@@ -3,7 +3,6 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Lift } from "@/components/Lift";
 import CharacterBoard from "./CharacterBoard";
-import { Navbar } from "@/components/Navbar";
 
 const ROOM_H = 196;
 const LABEL_H = 30;
@@ -167,7 +166,7 @@ function Laundromat() {
   );
 }
 
-function SushiBar({ chatOpen }: { chatOpen: boolean }) {
+function SushiBar({ chatOpen, onCharacterSelect }: { chatOpen: boolean; onCharacterSelect: () => void }) {
   const H = ROOM_H - LABEL_H;
   return (
     <div style={{ display: "flex", flexDirection: "column", borderBottom: "3px solid #1A1A2A", position: "relative" }}>
@@ -220,7 +219,26 @@ function SushiBar({ chatOpen }: { chatOpen: boolean }) {
           <div style={{ width: 2, height: 22, background: "#3A6A18", margin: "0 auto" }} />
           <div style={{ width: 18, height: 14, borderRadius: "50%", background: "#EE5577", marginLeft: -8, marginTop: -10, boxShadow: "3px -4px 0 #DD3366, -4px -2px 0 #FF77AA" }} />
         </div>
-        <Image src="/tung1.png"     alt="tung"     width={160} height={160} style={{ position: "absolute", left: 76,  bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <button
+          type="button"
+          aria-label="Talk to TungTungTung Sahur"
+          onClick={onCharacterSelect}
+          style={{
+            position: "absolute",
+            left: 76,
+            bottom: -8,
+            width: 160,
+            height: 160,
+            padding: 0,
+            border: 0,
+            background: "transparent",
+            cursor: "pointer",
+            zIndex: 12,
+            appearance: "none",
+          }}
+        >
+          <Image src="/tung1.png" alt="tung" width={160} height={160} style={{ width: "100%", height: "100%", objectFit: "contain" }} />
+        </button>
         <Image src="/eggplant1-clean.png" alt="eggplant" width={110} height={110} style={{ position: "absolute", left: 186, bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 8, background: "#7A5028" }} />
       </div>
@@ -342,10 +360,16 @@ function CoffeeHouse() {
 
 const px = "var(--font-pixel), monospace";
 const FLOOR_LABELS = ["F4","F3","F2","F1"];
+const LIFT_OPEN_DELAY_MS = 900;
 
 export default function Home() {
   const [boardOpen, setBoardOpen] = useState(false);
   const [hotelScale, setHotelScale] = useState(1);
+
+  function openTungAgent() {
+    window.dispatchEvent(new KeyboardEvent("keydown", { key: "e" }));
+    window.setTimeout(() => setBoardOpen(true), LIFT_OPEN_DELAY_MS);
+  }
 
   useEffect(() => {
     function onKeyDown(event: KeyboardEvent) {
@@ -445,7 +469,7 @@ export default function Home() {
           <div style={{ width: 410, display: "flex", flexDirection: "column" }}>
             <FortuneTeller />
             <Laundromat />
-            <SushiBar chatOpen={boardOpen} />
+            <SushiBar chatOpen={boardOpen} onCharacterSelect={openTungAgent} />
             <CoffeeHouse />
           </div>
         </div>
