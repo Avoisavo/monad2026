@@ -8,7 +8,7 @@ import {
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { parseEther } from "viem";
+import { formatEther, parseEther } from "viem";
 import {
   CREDITS_ABI,
   CREDITS_ADDRESS,
@@ -28,6 +28,19 @@ function monToTokens(monStr: string): bigint | null {
     const weiPerToken = parseEther("1") / TOKENS_PER_MON;
     if (wei % weiPerToken !== BigInt(0)) return null;
     return wei / weiPerToken;
+  } catch {
+    return null;
+  }
+}
+
+function tokensToMon(tokenStr: string): string | null {
+  try {
+    const trimmed = (tokenStr || "").trim();
+    if (!trimmed) return null;
+    const n = BigInt(trimmed);
+    if (n <= BigInt(0)) return null;
+    const weiPerToken = parseEther("1") / TOKENS_PER_MON;
+    return formatEther(n * weiPerToken);
   } catch {
     return null;
   }
@@ -56,6 +69,11 @@ export function Navbar() {
   const [topUpError, setTopUpError] = useState<string | null>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
 
+  const [withdrawOpen, setWithdrawOpen] = useState(false);
+  const [withdrawTokens, setWithdrawTokens] = useState("100");
+  const [withdrawError, setWithdrawError] = useState<string | null>(null);
+  const withdrawRef = useRef<HTMLDivElement>(null);
+
   const { isLoading: confirming, isSuccess: confirmed } =
     useWaitForTransactionReceipt({
       hash: lastTx ?? undefined,
@@ -82,14 +100,81 @@ export function Navbar() {
   }, [topUpOpen]);
 
   useEffect(() => {
+    if (!withdrawOpen) return;
+    const onMouse = (e: MouseEvent) => {
+      if (withdrawRef.current && !withdrawRef.current.contains(e.target as Node)) {
+        setWithdrawOpen(false);
+      }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setWithdrawOpen(false);
+    };
+    document.addEventListener("mousedown", onMouse);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onMouse);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [withdrawOpen]);
+
+  useEffect(() => {
     if (confirmed) {
       refetchTokens();
       setTopUpOpen(false);
+      setWithdrawOpen(false);
       setLastTx(null);
     }
   }, [confirmed, refetchTokens]);
 
   const previewTokens = monToTokens(topUpMon);
+  const withdrawMonPreview = tokensToMon(withdrawTokens);
+  const currentTokens = tokens as bigint | undefined;
+  const withdrawExceedsBalance = (() => {
+    try {
+      if (currentTokens === undefined) return false;
+      const n = BigInt((withdrawTokens || "").trim() || "0");
+      return n > currentTokens;
+    } catch {
+      return false;
+    }
+  })();
+
+  async function handleWithdraw() {
+    setWithdrawError(null);
+    if (!address || !onCorrectChain) {
+      setWithdrawError("Connect on Monad testnet first.");
+      return;
+    }
+    let amount: bigint;
+    try {
+      amount = BigInt((withdrawTokens || "").trim() || "0");
+    } catch {
+      setWithdrawError("Invalid token amount");
+      return;
+    }
+    if (amount <= BigInt(0)) {
+      setWithdrawError("Amount must be > 0");
+      return;
+    }
+    if (currentTokens !== undefined && amount > currentTokens) {
+      setWithdrawError("Exceeds your balance");
+      return;
+    }
+    try {
+      const hash = await writeContractAsync({
+        abi: CREDITS_ABI,
+        address: CREDITS_ADDRESS,
+        functionName: "withdraw",
+        args: [amount],
+        chainId: monadTestnet.id,
+      });
+      setLastTx(hash);
+    } catch (err) {
+      setWithdrawError(
+        err instanceof Error ? err.message.split("\n")[0] : String(err)
+      );
+    }
+  }
 
   async function handleTopUp() {
     setTopUpError(null);
@@ -158,17 +243,154 @@ export function Navbar() {
         {isConnected && onCorrectChain && (
           <>
             <div style={{ width: 1, height: 14, background: "#334466" }} />
-            <span
-              style={{
-                fontFamily: px,
-                fontSize: 8,
-                color: "#FFD566",
-                textShadow: "0 0 6px #FFB04488",
-              }}
-              title="On-chain token balance from AIQueryCredits"
-            >
-              {fmtTokens(tokens as bigint | undefined)} TOKENS
-            </span>
+            <div ref={withdrawRef} style={{ position: "relative" }}>
+              <button
+                onClick={() => setWithdrawOpen((o) => !o)}
+                title="Click to withdraw tokens back to MON"
+                aria-label="Withdraw tokens"
+                style={{
+                  fontFamily: px,
+                  fontSize: 8,
+                  color: "#FFD566",
+                  textShadow: "0 0 6px #FFB04488",
+                  background: "transparent",
+                  border: "none",
+                  padding: 0,
+                  cursor: "pointer",
+                  letterSpacing: 1,
+                }}
+              >
+                {fmtTokens(currentTokens)} TOKENS
+              </button>
+              {withdrawOpen && (
+                <div
+                  style={{
+                    position: "absolute",
+                    top: 22,
+                    right: 0,
+                    minWidth: 240,
+                    padding: 14,
+                    background: "linear-gradient(180deg, #222244 0%, #111133 100%)",
+                    border: "3px solid #334466",
+                    boxShadow: "0 6px 30px rgba(0,0,0,0.6)",
+                    fontFamily: px,
+                    color: "#EEDDFF",
+                    zIndex: 40,
+                  }}
+                >
+                  <div style={{ fontSize: 9, letterSpacing: 2, marginBottom: 10, color: "#AA88FF" }}>
+                    WITHDRAW TOKENS
+                  </div>
+                  <label style={{ fontSize: 7, color: "#AAAACC", display: "block", marginBottom: 4 }}>
+                    AMOUNT (TOKENS)
+                  </label>
+                  <input
+                    value={withdrawTokens}
+                    onChange={(e) => setWithdrawTokens(e.target.value)}
+                    style={{
+                      width: "100%",
+                      boxSizing: "border-box",
+                      background: "#0A0A1F",
+                      color: "#EEDDFF",
+                      border: "2px solid #334466",
+                      padding: "6px 8px",
+                      fontFamily: px,
+                      fontSize: 10,
+                      outline: "none",
+                    }}
+                  />
+                  <div style={{ display: "flex", gap: 4, marginTop: 6 }}>
+                    {[25, 50, 100].map((pct) => (
+                      <button
+                        key={pct}
+                        onClick={() => {
+                          if (currentTokens === undefined) return;
+                          const v = (currentTokens * BigInt(pct)) / BigInt(100);
+                          setWithdrawTokens(v.toString());
+                        }}
+                        style={{
+                          flex: 1,
+                          fontFamily: px,
+                          fontSize: 7,
+                          padding: "4px 0",
+                          background: "#0A0A1F",
+                          color: "#AAAACC",
+                          border: "1px solid #334466",
+                          cursor: "pointer",
+                          letterSpacing: 1,
+                        }}
+                      >
+                        {pct === 100 ? "MAX" : `${pct}%`}
+                      </button>
+                    ))}
+                  </div>
+                  <div style={{ fontSize: 7, color: "#AAAACC", marginTop: 6 }}>
+                    →{" "}
+                    <span
+                      style={{
+                        color:
+                          withdrawMonPreview === null || withdrawExceedsBalance
+                            ? "#FF6666"
+                            : "#FFD566",
+                      }}
+                    >
+                      {withdrawMonPreview === null
+                        ? "INVALID"
+                        : withdrawExceedsBalance
+                        ? "EXCEEDS BALANCE"
+                        : `${withdrawMonPreview} MON`}
+                    </span>
+                  </div>
+                  {withdrawError && (
+                    <div style={{ fontSize: 7, color: "#FF6666", marginTop: 6 }}>
+                      {withdrawError}
+                    </div>
+                  )}
+                  <button
+                    onClick={handleWithdraw}
+                    disabled={
+                      isPending ||
+                      confirming ||
+                      withdrawMonPreview === null ||
+                      withdrawExceedsBalance
+                    }
+                    style={{
+                      marginTop: 12,
+                      width: "100%",
+                      fontFamily: px,
+                      fontSize: 9,
+                      letterSpacing: 2,
+                      padding: "8px 0",
+                      background:
+                        isPending ||
+                        confirming ||
+                        withdrawMonPreview === null ||
+                        withdrawExceedsBalance
+                          ? "#555577"
+                          : "#FFD566",
+                      color: "#222244",
+                      border: "2px solid #AA8844",
+                      cursor:
+                        isPending ||
+                        confirming ||
+                        withdrawMonPreview === null ||
+                        withdrawExceedsBalance
+                          ? "not-allowed"
+                          : "pointer",
+                    }}
+                  >
+                    {isPending
+                      ? "CONFIRM IN WALLET…"
+                      : confirming
+                      ? "CONFIRMING…"
+                      : "WITHDRAW"}
+                  </button>
+                  <div style={{ fontSize: 6, color: "#666688", marginTop: 8, letterSpacing: 1 }}>
+                    10,000 TOKENS = 1 MON · BURNED ON WITHDRAW
+                  </div>
+                </div>
+              )}
+            </div>
             <div ref={popoverRef} style={{ position: "relative" }}>
               <button
                 onClick={() => setTopUpOpen((o) => !o)}
