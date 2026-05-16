@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import { Lift } from "@/components/Lift";
+import { Navbar } from "@/components/Navbar";
 
 const ROOM_H = 196;
 const LABEL_H = 30;
@@ -296,7 +297,9 @@ const TOTAL_H = ROOM_H * 4;
 
 export default function HotelPage() {
   return (
-    <div style={{ minHeight: "100vh", background: "#000000", display: "flex", alignItems: "center", justifyContent: "center" }}>
+    <div style={{ minHeight: "100vh", background: "#000000", display: "flex", flexDirection: "column" }}>
+      <Navbar />
+      <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ display: "flex", flexDirection: "column", boxShadow: "0 0 80px #00000099" }}>
 
         {/* ── BUILDING ── */}
@@ -384,6 +387,7 @@ export default function HotelPage() {
           ))}
         </div>
 
+      </div>
       </div>
     </div>
   );

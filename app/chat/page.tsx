@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import CharacterBoard from "./CharacterBoard";
+import { Navbar } from "@/components/Navbar";
 
 const ROOM_H = 196;
 const LABEL_H = 30;
@@ -382,6 +383,7 @@ export default function Home() {
       background: "radial-gradient(circle at 20% 20%, #1B1722 0%, #0A0807 42%, #070604 100%)",
       position: "relative",
     }}>
+      <Navbar />
       <main style={{
         position: "absolute",
         inset: 0,
