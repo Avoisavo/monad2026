@@ -126,9 +126,39 @@ export function Navbar() {
     }
   }, [confirmed, refetchTokens]);
 
+  const [optimisticOffset, setOptimisticOffset] = useState<bigint>(BigInt(0));
+  const prevTokensRef = useRef<bigint | undefined>(undefined);
+
+  useEffect(() => {
+    const onRefetch = (e: Event) => {
+      const detail = (e as CustomEvent<{ consumed?: number }>).detail;
+      if (detail?.consumed) {
+        setOptimisticOffset((prev) => prev + BigInt(detail.consumed!));
+      }
+      refetchTokens();
+    };
+    window.addEventListener("tokens:refetch", onRefetch);
+    return () => window.removeEventListener("tokens:refetch", onRefetch);
+  }, [refetchTokens]);
+
+  // When the on-chain balance drops (consume confirmed), clear the optimistic offset.
+  useEffect(() => {
+    const raw = tokens as bigint | undefined;
+    if (raw !== undefined && prevTokensRef.current !== undefined && raw < prevTokensRef.current) {
+      setOptimisticOffset(BigInt(0));
+    }
+    prevTokensRef.current = raw;
+  }, [tokens]);
+
   const previewTokens = monToTokens(topUpMon);
   const withdrawMonPreview = tokensToMon(withdrawTokens);
-  const currentTokens = tokens as bigint | undefined;
+  const rawTokens = tokens as bigint | undefined;
+  const currentTokens =
+    rawTokens === undefined
+      ? undefined
+      : rawTokens > optimisticOffset
+      ? rawTokens - optimisticOffset
+      : BigInt(0);
   const withdrawExceedsBalance = (() => {
     try {
       if (currentTokens === undefined) return false;
