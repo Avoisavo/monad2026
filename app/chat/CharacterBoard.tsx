@@ -1,5 +1,7 @@
 "use client";
 
+import { FormEvent, useEffect, useRef, useState } from "react";
+
 const selectedResident = {
   name: "Banana Barista",
   room: "Coffee House",
@@ -14,26 +16,89 @@ const boardNotes = [
   { label: "lead", text: "Same wallet appears in laundromat receipts" },
 ];
 
-const hardcodedMessages = [
-  {
-    who: "you",
-    text: "What does this knowledge base know about opening week?",
-  },
-  {
-    who: "agent",
-    text: "Opening week has two useful clusters: drink demand spikes after 8:40, and pastry sellouts happen before the second supplier drop.",
-  },
-  {
-    who: "you",
-    text: "Which room should I inspect next?",
-  },
-  {
-    who: "agent",
-    text: "Start with the Coffee House counter notes, then cross-check Laundromat chatter. The same customers show up in both timelines.",
-  },
-];
+type ChatMessage = {
+  role: "user" | "assistant";
+  text: string;
+};
+
+function renderInlineMarkdown(text: string) {
+  const parts = text.split(/(\*\*[^*]+\*\*)/g);
+
+  return parts.map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return <strong key={`${part}-${index}`}>{part.slice(2, -2)}</strong>;
+    }
+
+    return part;
+  });
+}
+
+function MarkdownMessage({ text }: { text: string }) {
+  const lines = text.split(/\n+/).map((line) => line.trim()).filter(Boolean);
+
+  return (
+    <div className="markdown-message">
+      {lines.map((line, index) => {
+        const bullet = line.match(/^[-*]\s+(.+)/);
+        const numbered = line.match(/^\d+[.)]\s+(.+)/);
+
+        if (bullet || numbered) {
+          return (
+            <div className="markdown-list-row" key={`${line}-${index}`}>
+              <span>{numbered ? `${line.match(/^\d+/)?.[0]}.` : "•"}</span>
+              <p>{renderInlineMarkdown((bullet || numbered)?.[1] || line)}</p>
+            </div>
+          );
+        }
+
+        return <p key={`${line}-${index}`}>{renderInlineMarkdown(line)}</p>;
+      })}
+    </div>
+  );
+}
 
 export default function CharacterBoard({ open, onToggle }: { open: boolean; onToggle: () => void }) {
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [query, setQuery] = useState("");
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState("");
+  const chatLogRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const chatLog = chatLogRef.current;
+    if (!chatLog) return;
+    chatLog.scrollTop = chatLog.scrollHeight;
+  }, [messages, open]);
+
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const question = query.trim();
+    if (!question || isSending) return;
+
+    const nextMessages = [...messages, { role: "user" as const, text: question }];
+    setMessages(nextMessages);
+    setQuery("");
+    setError("");
+    setIsSending(true);
+
+    try {
+      const response = await fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: nextMessages }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error || "The resident stayed quiet.");
+      }
+      setMessages((current) => [...current, { role: "assistant", text: data.reply }]);
+    } catch (caught) {
+      setError(caught instanceof Error ? caught.message : "The resident stayed quiet.");
+    } finally {
+      setIsSending(false);
+    }
+  }
+
   return (
     <aside
       className="character-board"
@@ -56,7 +121,7 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
       <div className="board-shell" style={{
         height: "100%",
         display: "grid",
-        gridTemplateRows: "auto auto minmax(390px, 1fr) auto",
+        gridTemplateRows: "auto auto minmax(0, 1fr) auto",
         gap: 12,
         padding: 16,
         position: "relative",
@@ -259,7 +324,7 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
           </div>
         </section>
 
-        <section style={{
+        <section ref={chatLogRef} style={{
           minHeight: 0,
           overflow: "auto",
           display: "flex",
@@ -271,10 +336,10 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
           border: "3px solid #4B3018",
           boxShadow: "inset 0 0 0 2px rgba(226,175,89,0.07)",
         }}>
-          {hardcodedMessages.map((message, index) => {
-            const isAgent = message.who === "agent";
+          {messages.map((message, index) => {
+            const isAgent = message.role === "assistant";
             return (
-              <article key={`${message.who}-${index}`} style={{
+              <article key={`${message.role}-${index}-${message.text}`} style={{
                 display: "flex",
                 gap: 8,
                 alignItems: "flex-start",
@@ -323,16 +388,44 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
                     <span>{isAgent ? selectedResident.name : "You"}</span>
                     <span>log 0{index + 1}</span>
                   </div>
-                  <p style={{ margin: 0, fontSize: 14, lineHeight: 1.44 }}>
-                    {message.text}
-                  </p>
+                  <MarkdownMessage text={message.text} />
                 </div>
               </article>
             );
           })}
+          {isSending && (
+            <article style={{ display: "flex", gap: 8, alignItems: "flex-start" }}>
+              <div style={{
+                flex: "0 0 auto",
+                display: "grid",
+                placeItems: "center",
+                width: 34,
+                height: 34,
+                background: "#E4A949",
+                color: "#29190E",
+                border: "2px solid #171007",
+                fontFamily: "var(--font-geist-mono), monospace",
+                fontSize: 11,
+                fontWeight: 900,
+                boxShadow: "0 4px 0 rgba(0,0,0,0.2)",
+              }}>
+                BA
+              </div>
+              <div style={{
+                background: "#F1DEAD",
+                color: "#27190E",
+                border: "2px solid #7D5527",
+                boxShadow: "inset 0 -5px 0 rgba(91,59,25,0.18)",
+                padding: 11,
+                fontSize: 14,
+              }}>
+                thinking...
+              </div>
+            </article>
+          )}
         </section>
 
-        <form style={{
+        <form onSubmit={handleSubmit} style={{
           display: "grid",
           gridTemplateColumns: "1fr 84px",
           gap: 8,
@@ -341,19 +434,15 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
           padding: 10,
           background: "#160F0A",
           border: "3px solid #4B3018",
+          position: "relative",
+          zIndex: 2,
         }}>
           <label style={{ display: "grid", gap: 6, minWidth: 0 }}>
-            <span style={{
-              fontFamily: "var(--font-pixel), monospace",
-              fontSize: 8,
-              color: "#E9C46A",
-              letterSpacing: 1.4,
-            }}>
-              QUERY FILE
-            </span>
             <input
               aria-label="Query selected resident"
-              defaultValue="Ask about menu anomalies..."
+              placeholder="Ask about hackathon project ideas..."
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
               style={{
                 minWidth: 0,
                 height: 44,
@@ -366,9 +455,19 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
                 boxShadow: "inset 0 2px 0 rgba(255,255,255,0.04)",
               }}
             />
+            {error && (
+              <span style={{
+                color: "#F1A36E",
+                fontFamily: "var(--font-geist-mono), monospace",
+                fontSize: 10,
+              }}>
+                {error}
+              </span>
+            )}
           </label>
           <button
-            type="button"
+            type="submit"
+            disabled={isSending}
             style={{
               height: 44,
               background: "#E9C46A",
@@ -376,12 +475,13 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
               border: "2px solid #F7D98D",
               fontFamily: "var(--font-pixel), monospace",
               fontSize: 10,
-              cursor: "pointer",
+              cursor: isSending ? "wait" : "pointer",
+              opacity: isSending ? 0.68 : 1,
               boxShadow: "inset 0 -5px 0 rgba(103,72,39,0.28)",
               transition: "transform 160ms ease, filter 160ms ease",
             }}
           >
-            FILE
+            {isSending ? "..." : "ENTER"}
           </button>
         </form>
       </div>
@@ -398,6 +498,36 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
         aside input:focus {
           border-color: #f7d98d;
           box-shadow: 0 0 0 3px rgba(233, 196, 106, 0.16), inset 0 2px 0 rgba(255, 255, 255, 0.04);
+        }
+
+        .markdown-message {
+          display: grid;
+          gap: 8px;
+          font-size: 14px;
+          line-height: 1.44;
+        }
+
+        .markdown-message p {
+          margin: 0;
+        }
+
+        .markdown-message strong {
+          font-weight: 900;
+        }
+
+        .markdown-list-row {
+          display: grid;
+          grid-template-columns: 18px 1fr;
+          gap: 7px;
+          align-items: start;
+        }
+
+        .markdown-list-row > span {
+          color: #835621;
+          font-family: var(--font-geist-mono), monospace;
+          font-size: 11px;
+          font-weight: 900;
+          line-height: 1.7;
         }
 
         @media (max-width: 640px) {
