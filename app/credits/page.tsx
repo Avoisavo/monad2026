@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
 import {
   useAccount,
   useBalance,
@@ -255,27 +254,24 @@ export default function CreditsPage() {
   return (
     <div className="min-h-full flex-1 bg-zinc-50 px-6 py-10 text-zinc-900 dark:bg-black dark:text-zinc-100">
       <div className="mx-auto max-w-3xl space-y-6">
-        <header className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-semibold tracking-tight">
-              AI Query Credits
-            </h1>
-            <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
-              Rate: <span className="font-mono">1 MON = 10,000 tokens</span>.
-              Permissionless — every function is callable by anyone but only
-              affects your own balance. Deployed at{" "}
-              <a
-                href={`${monadTestnet.blockExplorers.default.url}/address/${CREDITS_ADDRESS}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="font-mono text-blue-600 underline-offset-4 hover:underline dark:text-blue-400"
-              >
-                {CREDITS_ADDRESS.slice(0, 10)}…{CREDITS_ADDRESS.slice(-4)}
-              </a>{" "}
-              on Monad Testnet.
-            </p>
-          </div>
-          <ConnectButton showBalance={false} accountStatus="address" />
+        <header>
+          <h1 className="text-2xl font-semibold tracking-tight">
+            AI Query Credits
+          </h1>
+          <p className="mt-1 text-sm text-zinc-500 dark:text-zinc-400">
+            Rate: <span className="font-mono">1 MON = 10,000 tokens</span>.
+            Permissionless — every function is callable by anyone but only
+            affects your own balance. Deployed at{" "}
+            <a
+              href={`${monadTestnet.blockExplorers.default.url}/address/${CREDITS_ADDRESS}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-mono text-blue-600 underline-offset-4 hover:underline dark:text-blue-400"
+            >
+              {CREDITS_ADDRESS.slice(0, 10)}…{CREDITS_ADDRESS.slice(-4)}
+            </a>{" "}
+            on Monad Testnet.
+          </p>
         </header>
 
         {isConnected && !onCorrectChain && (
