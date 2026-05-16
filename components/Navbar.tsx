@@ -533,6 +533,19 @@ export function Navbar() {
           </>
         )}
         <div style={{ width: 1, height: 14, background: "#334466", marginLeft: 4 }} />
+        <Link
+          href="/host"
+          style={{
+            fontFamily: px,
+            fontSize: 8,
+            color: "#AAAACC",
+            textDecoration: "none",
+            letterSpacing: 1,
+          }}
+        >
+          HOST
+        </Link>
+        <div style={{ width: 1, height: 14, background: "#334466" }} />
         <ConnectButton
           showBalance={false}
           accountStatus={{ smallScreen: "avatar", largeScreen: "full" }}

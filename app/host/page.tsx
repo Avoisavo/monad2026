@@ -9,6 +9,7 @@ import {
   useWriteContract,
 } from "wagmi";
 import { decodeEventLog } from "viem";
+import { Navbar } from "@/components/Navbar";
 import {
   HOST_DRAFT_KEY,
   type HostDraft,
@@ -188,6 +189,8 @@ export default function HostPage() {
   }
 
   return (
+    <>
+    <Navbar />
     <div style={{
       minHeight: "calc(100dvh - 46px)",
       background: "radial-gradient(circle at 30% 10%, #1B1722 0%, #0A0807 55%, #060503 100%)",
@@ -289,6 +292,7 @@ export default function HostPage() {
         )}
       </div>
     </div>
+    </>
   );
 }
 
