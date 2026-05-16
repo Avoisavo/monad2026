@@ -1,6 +1,16 @@
 "use client";
 
 import { FormEvent, useEffect, useRef, useState } from "react";
+import {
+  useAccount,
+  useReadContract,
+  useWaitForTransactionReceipt,
+  useWriteContract,
+} from "wagmi";
+import { CREDITS_ABI, CREDITS_ADDRESS } from "@/lib/credits-contract";
+import { monadTestnet } from "@/lib/wagmi";
+
+export const TOKENS_REFETCH_EVENT = "tokens:refetch";
 
 const selectedResident = {
   name: "Banana Barista",
@@ -64,16 +74,54 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
   const [error, setError] = useState("");
   const chatLogRef = useRef<HTMLElement>(null);
 
+  const { address, isConnected, chainId } = useAccount();
+  const onCorrectChain = chainId === monadTestnet.id;
+  const { data: tokenBalance } = useReadContract({
+    abi: CREDITS_ABI,
+    address: CREDITS_ADDRESS,
+    functionName: "balanceOf",
+    args: address ? [address] : undefined,
+    chainId: monadTestnet.id,
+    query: {
+      enabled: !!address && onCorrectChain,
+      refetchInterval: 8000,
+    },
+  });
+  const { writeContractAsync } = useWriteContract();
+  const [consumeTx, setConsumeTx] = useState<`0x${string}` | null>(null);
+  const { isSuccess: consumeConfirmed } = useWaitForTransactionReceipt({
+    hash: consumeTx ?? undefined,
+    chainId: monadTestnet.id,
+  });
+
   useEffect(() => {
     const chatLog = chatLogRef.current;
     if (!chatLog) return;
     chatLog.scrollTop = chatLog.scrollHeight;
   }, [messages, open]);
 
+  useEffect(() => {
+    if (consumeConfirmed) {
+      // Plain event = "refetch only" — the optimistic offset stays until the
+      // on-chain balance actually drops, which is what this refetch will pick up.
+      window.dispatchEvent(new Event(TOKENS_REFETCH_EVENT));
+      setConsumeTx(null);
+    }
+  }, [consumeConfirmed]);
+
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const question = query.trim();
     if (!question || isSending) return;
+
+    if (!isConnected || !onCorrectChain) {
+      setError("Connect on Monad testnet to query.");
+      return;
+    }
+    if (tokenBalance === undefined || (tokenBalance as bigint) < BigInt(1)) {
+      setError("Not enough tokens. Top up first.");
+      return;
+    }
 
     const nextMessages = [...messages, { role: "user" as const, text: question }];
     setMessages(nextMessages);
@@ -82,6 +130,18 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
     setIsSending(true);
 
     try {
+      const hash = await writeContractAsync({
+        abi: CREDITS_ABI,
+        address: CREDITS_ADDRESS,
+        functionName: "consume",
+        args: [BigInt(1)],
+        chainId: monadTestnet.id,
+      });
+      setConsumeTx(hash);
+      window.dispatchEvent(
+        new CustomEvent(TOKENS_REFETCH_EVENT, { detail: { consumed: 1 } }),
+      );
+
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -93,7 +153,7 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
       }
       setMessages((current) => [...current, { role: "assistant", text: data.reply }]);
     } catch (caught) {
-      setError(caught instanceof Error ? caught.message : "The resident stayed quiet.");
+      setError(caught instanceof Error ? caught.message.split("\n")[0] : "The resident stayed quiet.");
     } finally {
       setIsSending(false);
     }
@@ -519,15 +579,15 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
           display: grid;
           grid-template-columns: 18px 1fr;
           gap: 7px;
-          align-items: start;
+          align-items: baseline;
         }
 
         .markdown-list-row > span {
           color: #835621;
           font-family: var(--font-geist-mono), monospace;
-          font-size: 11px;
+          font-size: 14px;
           font-weight: 900;
-          line-height: 1.7;
+          line-height: 1.44;
         }
 
         @media (max-width: 640px) {
