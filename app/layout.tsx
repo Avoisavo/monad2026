@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono, Press_Start_2P } from "next/font/google";
 import "./globals.css";
+import { Providers } from "./providers";
+import { Navbar } from "@/components/Navbar";
 
 const pressStart = Press_Start_2P({
   variable: "--font-pixel",
@@ -31,6 +33,16 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${pressStart.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">{children}</body>
+    <html
+      lang="en"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col">
+        <Providers>
+          <Navbar />
+          <div className="flex flex-1 flex-col">{children}</div>
+        </Providers>
+      </body>
     </html>
   );
 }

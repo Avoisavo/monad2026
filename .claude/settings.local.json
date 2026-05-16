@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install *)",
+      "Bash(npx tsc *)",
+      "Bash(npx next *)",
+      "Bash(git stash *)",
+      "Bash(npm view *)",
+      "Bash(gh repo *)",
+      "Bash(gh api *)",
+      "Bash(python3 -c \"import sys, json; data=json.load\\(sys.stdin\\); [print\\(f['name'], f['type']\\) for f in data] if isinstance\\(data, list\\) else print\\(data\\)\")",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(curl -s \"https://api.github.com/repos/0gfoundation/0g-storage-ts-starter-kit/contents\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/0gfoundation/0g-storage-ts-starter-kit/master/.env.example\")",
+      "Bash(curl -s \"https://raw.githubusercontent.com/0gfoundation/0g-storage-ts-starter-kit/master/package.json\")",
+      "Bash(cp /tmp/test-0g-upload.mjs /Users/Cedricctf/Code/monad2026/test-0g-upload.mjs)",
+      "Bash(node test-0g-upload.mjs ./.env)",
+      "Bash(npm run *)"
+    ]
+  }
+}
