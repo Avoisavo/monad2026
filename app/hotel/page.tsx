@@ -298,27 +298,6 @@ export default function HotelPage() {
     <div style={{ minHeight: "100vh", background: "#000000", display: "flex", alignItems: "center", justifyContent: "center" }}>
       <div style={{ display: "flex", flexDirection: "column", boxShadow: "0 0 80px #00000099" }}>
 
-        {/* ── TOP BAR ── */}
-        <div style={{
-          display: "flex", alignItems: "center", justifyContent: "space-between",
-          background: "linear-gradient(180deg, #222244 0%, #111133 100%)",
-          border: "3px solid #334466", borderBottom: "none",
-          padding: "0 14px", height: 38,
-        }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF4444", border: "2px solid #AA0000" }} />
-            <span style={{ fontFamily: px, fontSize: 9, color: "#FF6666", letterSpacing: 1 }}>LIVE</span>
-          </div>
-          <span style={{ fontFamily: px, fontSize: 11, color: "#EEDDFF", letterSpacing: 3, textShadow: "0 0 10px #AA88FF" }}>
-            BRAIN HOTEL
-          </span>
-          <div style={{ display: "flex", alignItems: "center", gap: 6 }}>
-            <span style={{ fontFamily: px, fontSize: 8, color: "#AAAACC" }}>4 FLOORS</span>
-            <div style={{ width: 1, height: 14, background: "#334466" }} />
-            <span style={{ fontFamily: px, fontSize: 8, color: "#AAAACC" }}>6 ACTIVE</span>
-          </div>
-        </div>
-
         {/* ── BUILDING ── */}
         <div style={{ display: "flex", alignItems: "stretch" }}>
 
@@ -359,7 +338,7 @@ export default function HotelPage() {
         {/* ── BOTTOM BAR ── */}
         <div style={{
           height: 46, background: "linear-gradient(180deg, #111133 0%, #0A0A22 100%)",
-          border: "3px solid #334466", borderTop: "none",
+          border: "3px solid #334466",
           display: "flex", alignItems: "center", padding: "0 12px", gap: 14,
         }}>
           {/* coins */}

@@ -35,55 +35,38 @@ export function Navbar() {
     },
   });
 
-  return (
-    <header className="sticky top-0 z-30 w-full border-b border-zinc-200 bg-white/80 backdrop-blur dark:border-zinc-800 dark:bg-black/70">
-      <div className="mx-auto flex h-14 max-w-6xl items-center justify-between gap-4 px-6">
-        <div className="flex items-center gap-6">
-          <Link
-            href="/"
-            className="text-sm font-semibold tracking-tight text-zinc-900 dark:text-zinc-100"
-          >
-            monad2026
-          </Link>
-          <nav className="hidden items-center gap-4 text-xs font-medium sm:flex">
-            {NAV_LINKS.map((l) => {
-              const active =
-                l.href === "/"
-                  ? pathname === "/"
-                  : pathname?.startsWith(l.href);
-              return (
-                <Link
-                  key={l.href}
-                  href={l.href}
-                  className={
-                    active
-                      ? "text-blue-600 dark:text-blue-400"
-                      : "text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
-                  }
-                >
-                  {l.label}
-                </Link>
-              );
-            })}
-          </nav>
-        </div>
+  const px = "var(--font-pixel), monospace";
 
-        <div className="flex items-center gap-3">
-          {isConnected && onCorrectChain && (
-            <div
-              className="hidden items-center gap-1.5 rounded-md bg-zinc-100 px-2.5 py-1.5 text-xs font-medium text-zinc-700 ring-1 ring-zinc-200 sm:flex dark:bg-zinc-900 dark:text-zinc-200 dark:ring-zinc-800"
-              title="On-chain token balance from AIQueryCredits"
-            >
-              <span className="font-mono">{fmtTokens(tokens as bigint | undefined)}</span>
-              <span className="text-zinc-500 dark:text-zinc-400">tokens</span>
-            </div>
-          )}
-          <ConnectButton
-            showBalance={false}
-            accountStatus={{ smallScreen: "avatar", largeScreen: "full" }}
-            chainStatus={{ smallScreen: "icon", largeScreen: "full" }}
-          />
-        </div>
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 30, width: "100%",
+      background: "linear-gradient(180deg, #222244 0%, #111133 100%)",
+      borderBottom: "3px solid #334466",
+      display: "flex", alignItems: "center", justifyContent: "space-between",
+      padding: "0 20px", height: 46,
+    }}>
+      {/* Left: LIVE */}
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <div style={{ width: 10, height: 10, borderRadius: "50%", background: "#FF4444", border: "2px solid #AA0000", boxShadow: "0 0 6px #FF000088" }} />
+        <span style={{ fontFamily: px, fontSize: 9, color: "#FF6666", letterSpacing: 1 }}>LIVE</span>
+      </div>
+
+      {/* Center: BRAIN HOTEL */}
+      <span style={{ fontFamily: px, fontSize: 11, color: "#EEDDFF", letterSpacing: 3, textShadow: "0 0 10px #AA88FF" }}>
+        BRAIN HOTEL
+      </span>
+
+      {/* Right: floors + active + connect */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+        <span style={{ fontFamily: px, fontSize: 8, color: "#AAAACC" }}>4 FLOORS</span>
+        <div style={{ width: 1, height: 14, background: "#334466" }} />
+        <span style={{ fontFamily: px, fontSize: 8, color: "#AAAACC" }}>6 ACTIVE</span>
+        <div style={{ width: 1, height: 14, background: "#334466", marginLeft: 4 }} />
+        <ConnectButton
+          showBalance={false}
+          accountStatus={{ smallScreen: "avatar", largeScreen: "full" }}
+          chainStatus={{ smallScreen: "icon", largeScreen: "full" }}
+        />
       </div>
     </header>
   );
