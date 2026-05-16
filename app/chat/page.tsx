@@ -2,6 +2,7 @@
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Lift } from "@/components/Lift";
+import { Navbar } from "@/components/Navbar";
 import CharacterBoard from "./CharacterBoard";
 
 const ROOM_H = 196;
@@ -403,9 +404,11 @@ export default function Home() {
   }, []);
 
   return (
-    <div style={{
+    <>
+      <Navbar />
+      <div style={{
       position: "fixed",
-      top: 44,
+      top: 46,
       right: 0,
       bottom: 0,
       left: 0,
@@ -522,6 +525,7 @@ export default function Home() {
 
       </div>
       <CharacterBoard open={boardOpen} onToggle={() => setBoardOpen((current) => !current)} />
-    </div>
+      </div>
+    </>
   );
 }
