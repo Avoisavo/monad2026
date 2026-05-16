@@ -12,7 +12,7 @@ export default function LandingPage() {
           autoPlay
           muted
           playsInline
-          onEnded={() => router.push("/hotel")}
+          onEnded={() => router.push("/chat")}
         >
           <source src="/land.mp4" type="video/mp4" />
         </video>
