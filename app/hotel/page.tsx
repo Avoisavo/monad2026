@@ -1,5 +1,6 @@
 "use client";
 import Image from "next/image";
+import { Lift } from "@/components/Lift";
 
 const ROOM_H = 196;
 const LABEL_H = 30;
@@ -152,7 +153,7 @@ function Laundromat() {
             <div style={{ width: 14, height: 22, background: "#5566CC" }} />
           </div>
         </div>
-        <Image src="/cucumber.png"   alt="cucumber"   width={110} height={110} style={{ position: "absolute", left: 76,  bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <Image src="/cucumber1.png"   alt="cucumber"   width={110} height={110} style={{ position: "absolute", left: 76,  bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <Image src="/strawberry.png" alt="strawberry" width={110} height={110} style={{ position: "absolute", left: 180, bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 8, background: "#9AA0B2" }} />
         <Door h={Math.floor(H * 0.62)} w={56} />
@@ -214,8 +215,8 @@ function SushiBar() {
           <div style={{ width: 2, height: 22, background: "#3A6A18", margin: "0 auto" }} />
           <div style={{ width: 18, height: 14, borderRadius: "50%", background: "#EE5577", marginLeft: -8, marginTop: -10, boxShadow: "3px -4px 0 #DD3366, -4px -2px 0 #FF77AA" }} />
         </div>
-        <Image src="/tung.png"     alt="tung"     width={110} height={110} style={{ position: "absolute", left: 76,  bottom: -8, objectFit: "contain", zIndex: 10 }} />
-        <Image src="/eggplant.png" alt="eggplant" width={110} height={110} style={{ position: "absolute", left: 186, bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <Image src="/tung1.png"     alt="tung"     width={160} height={160} style={{ position: "absolute", left: 76,  bottom: -8, objectFit: "contain", zIndex: 10 }} />
+        <Image src="/eggplant1.png" alt="eggplant" width={110} height={110} style={{ position: "absolute", left: 186, bottom: -8, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 8, background: "#7A5028" }} />
         <Door h={Math.floor(H * 0.68)} w={56} />
       </div>
@@ -281,7 +282,7 @@ function CoffeeHouse() {
             </div>
           ))}
         </div>
-        <Image src="/hudim.png" alt="hudim" width={110} height={110} style={{ position: "absolute", left: 76, bottom: 2, objectFit: "contain", zIndex: 10 }} />
+        <Image src="/hudim1.png" alt="hudim" width={110} height={110} style={{ position: "absolute", left: 76, bottom: 2, objectFit: "contain", zIndex: 10 }} />
         <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: 18, background: "#6A5030" }} />
         <Door h={Math.floor(H * 0.75)} w={56} />
       </div>
@@ -303,7 +304,7 @@ export default function HotelPage() {
 
           {/* brick column with floor numbers */}
           <div style={{
-            width: 88, background: "#5A5A60", position: "relative",
+            width: 52, background: "#5A5A60", position: "relative",
             backgroundImage: [
               "repeating-linear-gradient(0deg, transparent 0px, transparent 13px, rgba(0,0,0,0.35) 13px, rgba(0,0,0,0.35) 15px)",
               "repeating-linear-gradient(90deg, transparent 0px, transparent 26px, rgba(0,0,0,0.18) 26px, rgba(0,0,0,0.18) 28px)",
@@ -325,6 +326,9 @@ export default function HotelPage() {
               </div>
             ))}
           </div>
+
+          {/* ── LIFT ── */}
+          <Lift />
 
           {/* rooms */}
           <div style={{ width: 410, display: "flex", flexDirection: "column" }}>
