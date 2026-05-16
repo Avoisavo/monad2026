@@ -165,10 +165,10 @@ export default function CharacterBoard({ open, onToggle }: { open: boolean; onTo
       aria-hidden={!open}
       style={{
         position: "fixed",
-        top: 18,
-        right: 18,
-        bottom: 18,
-        width: "clamp(520px, 52vw, 860px)",
+        top: 8,
+        right: 12,
+        bottom: 12,
+        width: "clamp(760px, 66vw, 1080px)",
         minWidth: 0,
         zIndex: 20,
         transform: open ? "translateX(0) rotate(-0.4deg)" : "translateX(calc(100% + 42px)) rotate(1.2deg)",
